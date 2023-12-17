@@ -32,9 +32,10 @@ pip install -r requirements.txt
 ```
 - Define Environment Variables.
 
-```bash
-AZURE_API_KEY='cok_gizli'
-bla bla..
+```
+AZURE_OPENAI_API_KEY=cok_gizli_bisi
+AZURE_OPENAI_ENDPOINT=cok_gizli_bisi
+DEPLOYMENT_NAME_LLM=cok_gizli_bisi
 ```
 
 ## Running the Application
