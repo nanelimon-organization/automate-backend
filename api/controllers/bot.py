@@ -2,45 +2,63 @@ from fastapi import APIRouter, HTTPException
 from decouple import config
 import requests
 import base64
+from openai import AzureOpenAI
+from ..views.bot import AutoHackPromptBuilder
+
+API_KEY = config('AZURE_OPENAI_API_KEY')
+ENDPOINT = config('AZURE_OPENAI_ENDPOINT')
+LLM = config('DEPLOYMENT_NAME_LLM')
+
+azure_client = AzureOpenAI(
+    api_key=API_KEY,
+    api_version="2023-07-01-preview",
+    azure_endpoint=ENDPOINT
+)
 
 
 chat_router = APIRouter()
 vision_router = APIRouter()
 
-
 @chat_router.post("/chat_router", response_model=dict)
-async def chat(
-    text: str,
-    choice: str = None,
-):
+async def chat(question: str):
     """
-    Knowladge
+    Asynchronous endpoint to handle chat requests using an LLM.
 
+    This endpoint takes a question as input and uses the AutoHackPromptBuilder
+    to generate a system prompt which, along with the user's question, is sent
+    to the LLM for processing. The LLM generates a completion based on the 
+    provided messages and returns the response.
 
     Parameters
     ----------
-    * text : Str
-        - Message sent to LLM
-    * choice : Str
-        - A flag indicating what type of content the message is being sent for.
-        Alternative parameters it can receive: Return from Form1, Return from Form2, message response
+    question : str
+        The user's input question to be sent to the chat model.
 
     Returns
     -------
-    * result : json
-        - return LLM
+    dict
+        A dictionary with a single key 'result' containing the LLM's response.
 
     Raises
     ------
-    * HTTPException
-        -   If there is an error during processing.
+    HTTPException
+        An error response with status code 400 if an exception occurs during 
+        the chat process.
     """
     try:
-        results = ''
-        return {"result": results}
-    except Exception as ex:
-        raise HTTPException(status_code=400, detail=f"Error processing text: {ex}")
+        autohack_prompt_builder = AutoHackPromptBuilder("BorusanAutoHack")
+        sys_prompt_template = autohack_prompt_builder.generate_system_prompt(question)
+        messages = [{"role": "system", "content": sys_prompt_template}, 
+                    {"role": "user", "content": question}]
 
+        completion = azure_client.chat.completions.create(
+            model=LLM, 
+            messages=messages
+        )
+
+        return {"result": completion.choices[0].message.content}
+    except Exception as ex:
+        raise HTTPException(status_code=400, detail=f"Error in chat: {ex}")
 
 @vision_router.post("/vision_router", response_model=dict)
 async def vision(
