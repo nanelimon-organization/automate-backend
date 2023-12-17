@@ -33,9 +33,22 @@ pip install -r requirements.txt
 - Define Environment Variables.
 
 ```
-AZURE_OPENAI_API_KEY=cok_gizli_bisi
+# GPT 4 Vision API
+GPT4V_API_KEY=cok_gizli_bisi
+GPT4V_ENDPOINT=cok_gizli_bisi
+
+# QDRANT API
+QDRANT_URL=cok_gizli_bisi
+QDRANT_API_KEY=cok_gizli_bisi
+
+# Azure OpenAI API for GPT-4-8k model
 AZURE_OPENAI_ENDPOINT=cok_gizli_bisi
+AZURE_OPENAI_API_KEY=cok_gizli_bisi
 DEPLOYMENT_NAME_LLM=cok_gizli_bisi
+
+# Azure OpenAI API for embedding model - text-embedding-ada-002
+AZURE_OPENAI_EMBD_API_KEY=cok_gizli_bisi
+AZURE_OPENAI_EMBD_ENDPOINT=cok_gizli_bisi
 ```
 
 ## Running the Application
