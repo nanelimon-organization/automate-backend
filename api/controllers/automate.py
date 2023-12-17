@@ -56,8 +56,16 @@ async def chat(question: str):
             model=LLM, 
             messages=messages
         )
+        content = completion.choices[0].message.content
 
-        return {"result": completion.choices[0].message.content}
+        if '#' in content:
+            result_part = content.split('#')[0]
+            type_part = content.split('#')[-1]
+        else:
+            result_part = content
+            type_part = None
+        return {"result": result_part,
+                "type": type_part}
     except Exception as ex:
         raise HTTPException(status_code=400, detail=f"Error in chat: {ex}")
 
