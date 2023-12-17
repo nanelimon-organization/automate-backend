@@ -3,7 +3,7 @@ from decouple import config
 import requests
 import base64
 from openai import AzureOpenAI
-from ..views.bot import AutoHackPromptBuilder
+from ..views.automate import AutoHackPromptBuilder
 
 API_KEY = config('AZURE_OPENAI_API_KEY')
 ENDPOINT = config('AZURE_OPENAI_ENDPOINT')

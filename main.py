@@ -7,7 +7,7 @@ def main():
     """
     uvicorn.run(
         app="wsgi:app",
-        port=5000,
+        port=80,
         log_level="info",
         reload=True,
     )

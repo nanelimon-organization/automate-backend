@@ -1,7 +1,7 @@
 from fastapi import APIRouter
-from .controllers.bot import chat_router, vision_router
-from .controllers.bot import chat_router
-from .controllers.bot import vision_router
+from .controllers.automate import chat_router, vision_router
+from .controllers.automate import chat_router
+from .controllers.automate import vision_router
 api_router = APIRouter()
 
 api_router.include_router(
