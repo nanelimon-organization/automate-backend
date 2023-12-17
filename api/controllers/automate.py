@@ -1,5 +1,6 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, File, UploadFile, Form
 from decouple import config
+from starlette.responses import JSONResponse
 import requests
 import base64
 from openai import AzureOpenAI
@@ -60,24 +61,22 @@ async def chat(question: str):
     except Exception as ex:
         raise HTTPException(status_code=400, detail=f"Error in chat: {ex}")
 
-@vision_router.post("/vision_router", response_model=dict)
-async def vision(
-    question: str,
-    url: str,
-):
-    """
-    Analyzes an image from a given URL with a text query using GPT-4 Vision API.
 
-    This endpoint encodes a publicly accessible image from a URL into base64 format and sends it 
-    with the text query to the GPT-4 Vision API. Returns the processed response focusing on 
-    the AI's interpretation of the image... 
-    
+@vision_router.post("/vision_router", response_model=dict)
+async def vision(question: str = Form(...), file: UploadFile = File(...)):
+    """
+    Analyzes an uploaded image with a text query using GPT-4 Vision API.
+
+    This endpoint encodes an uploaded image into base64 format and sends it
+    with the text query to the GPT-4 Vision API. Returns the processed response focusing on
+    the AI's interpretation of the image and the related question.
+
     Parameters
     ----------
     question : str
         Description or question about the image to be analyzed.
-    url : str
-        URL of the publicly accessible image.
+    file : UploadFile
+        The image file to be analyzed, uploaded by the user.
 
     Returns
     -------
@@ -98,7 +97,9 @@ async def vision(
         api_key = config('GPT4V_API_KEY')
         gpt4v_endpoint = config('GPT4V_ENDPOINT')
 
-        encoded_image = base64.b64encode(requests.get(url).content).decode('ascii')
+        # Dosyayı oku ve base64'e çevir
+        file_contents = await file.read()
+        encoded_image = base64.b64encode(file_contents).decode('ascii')
 
         headers = {
             "Content-Type": "application/json",
@@ -106,40 +107,40 @@ async def vision(
         }
 
         payload = {
-          "messages": [
-            {
-              "role": "system",
-              "content": [
+            "messages": [
                 {
-                  "type": "text",
-                  "text": "You are an AI assistant that helps people find information."
-                }
-              ]
-            },
-            {
-              "role": "user",
-              "content": [
-                {
-                  "type": "image_url",
-                  "image_url": {
-                    "url": f"data:image/jpeg;base64,{encoded_image}"
-                  }
+                    "role": "system",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "You are an AI assistant that helps people find information."
+                        }
+                    ]
                 },
                 {
-                  "type": "text",
-                  "text": question
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:image/jpeg;base64,{encoded_image}"
+                            }
+                        },
+                        {
+                            "type": "text",
+                            "text": question
+                        }
+                    ]
                 }
-              ]
-            }
-          ],
-          "temperature": 0.3,
-          "top_p": 0.95,
-          "max_tokens": 800
+            ],
+            "temperature": 0.3,
+            "top_p": 0.95,
+            "max_tokens": 800
         }
 
         response = requests.post(gpt4v_endpoint, headers=headers, json=payload)
         response.raise_for_status()
         response_data = response.json()
-        return {"result": response_data["choices"][0]["message"]["content"]}
+        return JSONResponse(content={"result": response_data["choices"][0]["message"]["content"]})
     except Exception as ex:
         raise HTTPException(status_code=400, detail=f"Error processing text: {ex}")
