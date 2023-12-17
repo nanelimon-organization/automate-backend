@@ -2,12 +2,13 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api import chat_router, vision_router
 import os
+from logging.config import dictConfig
 
+from api.config.logger.log_config import LogConfig
 
 def create_app() -> FastAPI:
     """
     Create the FastAPI application.
-
     Returns
     -------
     app : FastAPI
@@ -21,6 +22,7 @@ def create_app() -> FastAPI:
     )
 
     init_routers(app)
+    init_logger()
     configure_middleware(app)
 
     return app
@@ -28,12 +30,10 @@ def create_app() -> FastAPI:
 def init_routers(app: FastAPI) -> None:
     """
     Initialize routers for the application.
-
     Parameters
     ----------
     app : FastAPI
         The FastAPI instance to attach the routers to.
-
     Returns
     -------
     None
@@ -41,16 +41,16 @@ def init_routers(app: FastAPI) -> None:
     app.include_router(chat_router)
     app.include_router(vision_router)
 
+def init_logger():
+    dictConfig(LogConfig().dict())
 
 def configure_middleware(app: FastAPI) -> None:
     """
     Configure middleware for the application.
-
     Parameters
     ----------
     app : FastAPI
         The FastAPI instance to configure the middleware for.
-
     Returns
     -------
     None
@@ -63,6 +63,5 @@ def configure_middleware(app: FastAPI) -> None:
         allow_methods=["*"],
         allow_headers=["*"]
     )
-
 
 app = create_app()

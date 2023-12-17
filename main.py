@@ -8,7 +8,7 @@ def main():
     uvicorn.run(
         app="wsgi:app",
         host="0.0.0.0",
-        port=80,
+        port=8000,
         log_level="debug",
         reload=True,
     )
