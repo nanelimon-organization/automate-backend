@@ -2,7 +2,7 @@
 ## AutoMate Gen-AI Backend Service
 
 ### Description
-_Backend service of AutoMate Gen-AI application. Includes API endpoints for chat and video operations._
+_Backend service of AutoMate Gen-AI application. Includes API endpoints for chat and vision operations._
 
 ### Environment Setup
 
