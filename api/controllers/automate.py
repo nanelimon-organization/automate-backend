@@ -66,7 +66,7 @@ async def chat(question: str):
             elif type_part in 'form-2':
                 type_part = 'form-2'
             else:
-                type_part = 'form-1'
+                type_part = 'form-2'
         else:
             result_part = content
             type_part = None
