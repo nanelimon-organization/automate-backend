@@ -4,6 +4,10 @@
 ### Description
 _Backend service of AutoMate Gen-AI application. Includes API endpoints for chat and vision operations._
 
+### Architecture
+![app architech](https://github.com/Teknofest-Nane-Limon/automate-backend/assets/8446004/03b6adaa-9d64-47e2-a3a8-aed88f1b0055)
+
+
 ### Environment Setup
 
 Please set your Python version to Python 3.11.6:
