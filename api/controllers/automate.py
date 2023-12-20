@@ -61,6 +61,12 @@ async def chat(question: str):
         if '#' in content:
             result_part = content.split('#')[0]
             type_part = content.split('#')[-1]
+            if type_part in 'form-1':
+                type_part = 'form-1'
+            elif type_part in 'form-2':
+                type_part = 'form-2'
+            else:
+                type_part = 'form-1'
         else:
             result_part = content
             type_part = None
